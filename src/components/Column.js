@@ -8,7 +8,7 @@ class Column extends React.Component {
 
     let rowsArr = [];
 
-    const { gridFull } = this.props;
+    // const { gridFull } = this.props;
 
     for (var j = 0; j < this.props.rows; j++) {
       let i = this.props.col;

@@ -78,13 +78,20 @@ class ConnectBoard extends React.Component {
   checkIfMatch(i, k) {
     console.log("zazm MATCHING START");
     const gridFull = {...this.state.gridFull};
-    let winner = "";
+    // let winner = "";
     let matchez = 0;
+    let storei = i;
+    let storek = k;
+    let ik = this.state.gridFull[i][k];
 
     //checks horizontally for matches, based on where the coin was dropped
     for (var checki = 0; checki <= this.cols; checki++) {
+      let cisk = this.state.gridFull
+              && this.state.gridFull[checki]
+              && this.state.gridFull[checki][storek];
 
-      if (this.state.gridFull[checki][k] === this.state.gridFull[i][k]) {
+      console.log("zazs checkk: " + checki + " || i: " + storei + " || k: " + storek + " || [checki+storek]: " + ik + " || cisk: " + cisk);
+      if (cisk === ik) {
 
         matchez++;
         console.log("zazm matches++ so far: " + matchez);
@@ -107,7 +114,7 @@ class ConnectBoard extends React.Component {
   checkIfVertMatch(i, k) {
     console.log("zazv VERT MATCHING START");
     const gridFull = {...this.state.gridFull};
-    let winner = "";
+    // let winner = "";
     let matchez = 0;
 
     //checks vertically for matches, based on where the coin was dropped
@@ -139,7 +146,7 @@ class ConnectBoard extends React.Component {
   checkIfDiagMatch(i, k) {
     console.log("zazd DIAGONAL MATCHING START");
     const gridFull = {...this.state.gridFull};
-    let winner = "";
+    // let winner = ""; 
     let matchez = 0;
 
 
@@ -231,17 +238,17 @@ class ConnectBoard extends React.Component {
     if (i >= this.cols || i < 0 || j >= this.rows || j < 0) console.log("test"); 
 
     for (var k = (this.rows - 1); k > -1; k--) {
-      let newvalue = 1;
+      // let newvalue = 1;
       console.log("k: " + k);
       console.log("grdfl[ik]: " + gridFull[i][k]);
 
-      if (gridFull[i][k] == "box") { 
+      if (gridFull[i][k] === "box") { 
         gridFull[i][k] = this.whoseTurn();
         console.log("zaw new grdfl[ik]: " + gridFull[i][k]);
         console.log(this.state.gridFull);
         console.log('zaw returning'); 
-        let wherecoini = i;
-        let wherecoink = k;
+        // let wherecoini = i;
+        // let wherecoink = k;
         console.log("zaw new grdfl[ik]: " + gridFull[i][k]);
         this.setState({ gridFull });
         break;
