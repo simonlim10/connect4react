@@ -5,9 +5,6 @@ class Box extends React.Component {
   constructor(props){
     super(props);
 
-    // let colz = this.props.col;
-    // let rowz = this.props.row;
-
     this.boxClick = this.boxClick.bind(this);
 
     this.state = {
@@ -34,10 +31,10 @@ class Box extends React.Component {
 
     return (
       <div
-        className={cellstate}
+        className="box"
         id={this.props.id}
         onClick={this.boxClick}>
-        <div className="dropping-coin" />
+        <div className={cellstate} />
       </div>
     );
   }

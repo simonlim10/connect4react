@@ -20,7 +20,7 @@ class ConnectBoard extends React.Component {
     this.rows = 6;
 
     this.state = {
-      gridFull: Array(this.cols).fill().map(() => Array(this.rows).fill("box")),
+      gridFull: Array(this.cols).fill().map(() => Array(this.rows).fill("dropping-coin")),
       turns: 1,
       winnerplayer: "",
       nobody: null,
@@ -33,10 +33,10 @@ class ConnectBoard extends React.Component {
     let gridFull = {...this.state.gridFull};
 
     if (this.state.gridFull[i][k] === "p-red") {
-      gridFull[i][k] = "box p-red";
+      gridFull[i][k] = "dropping-coin p-red";
       console.log("turning into red");
     } else if (this.state.gridFull[i][k] === "p-yellow") {
-      gridFull[i][k] = "box p-yellow";
+      gridFull[i][k] = "dropping-coin p-yellow";
       console.log("turning into yellow");
     }
 
@@ -47,23 +47,25 @@ class ConnectBoard extends React.Component {
 
   checkForWinner(winner) {
       console.log("zaw checkForWinner!!!");
+      console.log("WINNERZ:" + winner);
     if (winner !== null && winner !== undefined) {
       console.log("ya won FOOL: " + winner);
       let winnerplayer = {...this.state.winnerplayer};
-      winnerplayer = "showit";
+      winnerplayer = "showitwin";
       this.setState({ winnerplayer });
+      return 1;
+    } else if (winner === undefined) {
+      console.log("CHECKING checkIfBoardFull from dropCoin > checkForWinner!!");
+      this.checkIfBoardFull(winner);
+      return;
     }
-
-    console.log("CHECKING checkIfBoardFull from dropCoin!!");
-    this.checkIfBoardFull();
-
   }
 
-  checkIfBoardFull() {
+  checkIfBoardFull(winner) {
     console.log("zaw checkingIfBoardFull!!!");
     let turnz = this.state.turns;
     console.log("zaw turnz:"+turnz);
-    if (turnz > 41) {
+    if (turnz > 41 && winner === undefined) {
       console.log("zaw NOBODY won!");
       let winnerplayer = {...this.state.winnerplayer};
       winnerplayer = "showit";
@@ -78,7 +80,6 @@ class ConnectBoard extends React.Component {
   checkIfMatch(i, k) {
     console.log("zazm MATCHING START");
     const gridFull = {...this.state.gridFull};
-    // let winner = "";
     let matchez = 0;
     let storei = i;
     let storek = k;
@@ -90,7 +91,7 @@ class ConnectBoard extends React.Component {
               && this.state.gridFull[checki]
               && this.state.gridFull[checki][storek];
 
-      console.log("zazs checkk: " + checki + " || i: " + storei + " || k: " + storek + " || [checki+storek]: " + ik + " || cisk: " + cisk);
+      console.log("zazms checkk: " + checki + " || i: " + storei + " || k: " + storek + " || [checki+storek]: " + ik + " || cisk: " + cisk);
       if (cisk === ik) {
 
         matchez++;
@@ -114,7 +115,6 @@ class ConnectBoard extends React.Component {
   checkIfVertMatch(i, k) {
     console.log("zazv VERT MATCHING START");
     const gridFull = {...this.state.gridFull};
-    // let winner = "";
     let matchez = 0;
 
     //checks vertically for matches, based on where the coin was dropped
@@ -146,11 +146,10 @@ class ConnectBoard extends React.Component {
   checkIfDiagMatch(i, k) {
     console.log("zazd DIAGONAL MATCHING START");
     const gridFull = {...this.state.gridFull};
-    // let winner = ""; 
     let matchez = 0;
 
 
-    //checks diagonally from UPPER LEFT to LOWER RIGHT 
+    //checks diagonally what's the UPPER LEFT most value based on drop 
     for (var ULchecki = i, ULcheckk = k; ULchecki > 0 && ULcheckk > 0; ULcheckk--, ULchecki--) {
       console.log("zazd ULchecki: " + ULchecki + " || ULcheckk: " + ULcheckk);
     }
@@ -184,12 +183,13 @@ class ConnectBoard extends React.Component {
 
     console.log("zazd *STARTING*- UR matches: " );
 
-    //checks diagonally from UPPER RIGHT to LOWER LEFT 
+    //checks diagonally what's the UPPER LEFT most value based on drop 
     for (var URchecki = i, URcheckk = k; URchecki < (this.cols - 1) && URcheckk > 0; URchecki++, URcheckk--) {
       console.log("zazd URchecki: " + URchecki + " || URcheckk: " + URcheckk);
     }
     console.log("zazdout URchecki: " + URchecki + " || URcheckk: " + URcheckk);
 
+    //checks diagonally from UPPER RIGHT to LOWER LEFT 
     for (var URcheckcol = URchecki, URcheckrow = URcheckk; URcheckcol >= 0 && URcheckrow < this.rows; URcheckcol--, URcheckrow++) {
       console.log("zazd URcheckcol: " + URcheckcol + " || URcheckrow: " + URcheckrow);
       if (gridFull[URcheckcol][URcheckrow] === gridFull[i][k]) {
@@ -224,9 +224,9 @@ class ConnectBoard extends React.Component {
     console.log("turns%2: " + (this.state.turns % 2));
 
     if (this.state.turns % 2 === 1) {
-      return "box p-red";
+      return "dropping-coin p-red";
     };
-    return "box p-yellow";
+    return "dropping-coin p-yellow";
 
   }
 
@@ -238,17 +238,16 @@ class ConnectBoard extends React.Component {
     if (i >= this.cols || i < 0 || j >= this.rows || j < 0) console.log("test"); 
 
     for (var k = (this.rows - 1); k > -1; k--) {
-      // let newvalue = 1;
+
       console.log("k: " + k);
       console.log("grdfl[ik]: " + gridFull[i][k]);
 
-      if (gridFull[i][k] === "box") { 
+      if (gridFull[i][k] === "dropping-coin") { 
         gridFull[i][k] = this.whoseTurn();
         console.log("zaw new grdfl[ik]: " + gridFull[i][k]);
         console.log(this.state.gridFull);
         console.log('zaw returning'); 
-        // let wherecoini = i;
-        // let wherecoink = k;
+
         console.log("zaw new grdfl[ik]: " + gridFull[i][k]);
         this.setState({ gridFull });
         break;
@@ -275,34 +274,48 @@ class ConnectBoard extends React.Component {
     const coinstopk = coinstopresult[1]
 
     const matchresultd = this.checkIfDiagMatch(coinstopi, coinstopk);
-    this.checkForWinner(matchresultd);
-
-    const matchresultv = this.checkIfVertMatch(coinstopi, coinstopk);
-    this.checkForWinner(matchresultv);
-
-    const matchresult = this.checkIfMatch(coinstopi, coinstopk);
-    this.checkForWinner(matchresult);
-
+    var diagresult = this.checkForWinner(matchresultd);
+    console.log("zar diagresult before chkforwin: " + diagresult);
+    
+    if (diagresult === undefined) {
+      const matchresultv = this.checkIfVertMatch(coinstopi, coinstopk);
+      var vertresult = this.checkForWinner(matchresultv);
+      console.log("zar vertresult before chkforwin: " + vertresult);
+    }
+    
+    //error note 19: don't blame javascript all the time, sometimes its your logic that's missing a step
+    if (diagresult === undefined && vertresult === undefined) {
+      const matchresult = this.checkIfMatch(coinstopi, coinstopk);
+      var horizresult = this.checkForWinner(matchresult);
+      console.log("zar horizresult: " + horizresult);
+    }
+    //error note 18: missed important conditionals that reset the value that i needed. console log helps you trace the wrong logic/flow.
+    console.log("zar end checks----");
   }
 
 
   render() {
 
-    let nobodywon = this.state.nobody;
-
     let whosdropping = this.state.turns % 2 === 0 ? "yellow's " : "red's ";
 
-    let winningplayer = (this.state.turns > 41) ? "nobody " : "";
-    winningplayer = this.state.turns % 2 === 0 ? "red " : "yellow ";
+    let winningplayer = (this.state.turns % 2 === 0) ? "red " : "yellow ";
+    winningplayer = (this.state.winnerplayer === "showitwin") ? winningplayer : "";
+    winningplayer = (this.state.winnerplayer === "showit") ? this.state.nobody : winningplayer;
 
     return (
       <div className="connect-background">
-      {whosdropping} turn!
+        <div className={this.state.winnerplayer} id="winnercover">
+        </div>
+
+        <div className="whos-dropping">
+          {whosdropping} turn!
+        </div>
 
         <div className="connect-board">
-          <div className={this.state.winnerplayer} id="winnercover">
+        
+          <div className={this.state.winnerplayer} id="winnercoverboard">
             <div className={this.state.winnerplayer} id="winnermodal">
-              {!nobodywon ? winningplayer : nobodywon} won!
+              {winningplayer} won!
             </div>
           </div>
 
