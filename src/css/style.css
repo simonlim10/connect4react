@@ -855,16 +855,16 @@ body {
   transition: 0.5s;
   opacity: 0;
 }
-#winnercoverboard.showit,
-#winnercoverboard.showitwin {
+#winnercoverboard.show-winner,
+#winnercoverboard.show-winner-modal {
   opacity: 1;
 
   display: flex;
 
   transition: 0.5s;
 }
-#winnercover.showit,
-#winnercover.showitwin {
+#winnercover.show-winner,
+#winnercover.show-winner-modal {
   background: rgba(0,0,0,0.3);
 
   display: flex;
@@ -888,8 +888,8 @@ body {
   opacity: 0;
   transition: 0.5s;
 }
-#winnermodal.showit,
-#winnermodal.showitwin {
+#winnermodal.show-winner,
+#winnermodal.show-winner-modal {
   opacity: 1;
   transition: 0.5s;
 }

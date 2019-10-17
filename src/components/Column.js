@@ -19,8 +19,7 @@ class Column extends React.Component {
           row={j}
           selectBox={this.props.selectBox}
           dropCoin={this.props.dropCoin}
-          gridFull={this.props.gridFull}
-          changeBoxColor={this.props.changeBoxColor}
+          grid={this.props.grid}
         />
       );
     }

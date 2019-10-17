@@ -6,17 +6,6 @@ class Box extends React.Component {
     super(props);
 
     this.boxClick = this.boxClick.bind(this);
-
-    this.state = {
-      boxClassCopy: "box"
-    };  
-  }
-
-  componentWillMount() {
-    let colz = this.props.col;
-    let rowz = this.props.row;
-
-    this.props.changeBoxColor(colz,rowz); 
   }
 
   boxClick() {
@@ -24,10 +13,10 @@ class Box extends React.Component {
   }
 
   render() {
-    let colz = this.props.col;
-    let rowz = this.props.row;
+    let currentColumn = this.props.col;
+    let currentRow = this.props.row;
 
-    const cellstate = this.props.gridFull[colz][rowz];
+    const cellstate = this.props.grid[currentColumn][currentRow];
 
     return (
       <div

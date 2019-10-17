@@ -6,21 +6,20 @@ class ConnectBoard extends React.Component {
   constructor() {
     super();
 
-    this.changeBoxColor = this.changeBoxColor.bind(this);
     this.dropCoin = this.dropCoin.bind(this);
     this.whoseTurn = this.whoseTurn.bind(this);
     this.checkForWinner = this.checkForWinner.bind(this);
     this.checkIfBoardFull = this.checkIfBoardFull.bind(this);
-    this.checkIfMatch = this.checkIfMatch.bind(this);
-    this.checkIfVertMatch = this.checkIfVertMatch.bind(this);
-    this.checkIfDiagMatch = this.checkIfDiagMatch.bind(this);
+    this.checkForHorizontalMatch = this.checkForHorizontalMatch.bind(this);
+    this.checkForVerticalMatch = this.checkForVerticalMatch.bind(this);
+    this.checkForDiagonalMatch = this.checkForDiagonalMatch.bind(this);
     this.whereCoinWillStop = this.whereCoinWillStop.bind(this);
 
     this.cols = 7;
     this.rows = 6;
 
     this.state = {
-      gridFull: Array(this.cols).fill().map(() => Array(this.rows).fill("dropping-coin")),
+      grid: Array(this.cols).fill().map(() => Array(this.rows).fill("dropping-coin")),
       turns: 1,
       winnerplayer: "",
       nobody: null,
@@ -28,23 +27,13 @@ class ConnectBoard extends React.Component {
     };
 
   }
-
-  changeBoxColor(i,k) {
-
-    let gridFull = {...this.state.gridFull};
-
-    if (this.state.gridFull[i][k] === "p-red") {
-      gridFull[i][k] = "dropping-coin p-red";
-    } else if (this.state.gridFull[i][k] === "p-yellow") {
-      gridFull[i][k] = "dropping-coin p-yellow";
-    }
-    this.setState({ gridFull });
-  }
+  // variable legend:
+  // i = which column we're dropping the coin in, j = which row was clicked in that column, k = 
 
   checkForWinner(winner) {
     if (winner !== null && winner !== undefined) {
       let winnerplayer = {...this.state.winnerplayer};
-      winnerplayer = "showitwin";
+      winnerplayer = "show-winner-modal";
       this.setState({ winnerplayer });
       return 1;
     } else if (winner === undefined) {
@@ -57,7 +46,7 @@ class ConnectBoard extends React.Component {
     let turns = this.state.turns;
     if (turns > 41 && winner === undefined) {
       let winnerplayer = {...this.state.winnerplayer};
-      winnerplayer = "showit";
+      winnerplayer = "show-winner";
       this.setState({ winnerplayer });
       let nobody = {...this.state.nobody};
       nobody = "nobody ";
@@ -65,23 +54,17 @@ class ConnectBoard extends React.Component {
     }
   }
 
-  checkIfMatch(i, k) {
-    const gridFull = {...this.state.gridFull};
+  checkForHorizontalMatch(i, k) {
+    const grid = {...this.state.grid};
     let matchCount = 0;
-    let storei = i;
-    let storek = k;
-    let ik = this.state.gridFull[i][k];
 
-    //checks horizontally for matches, based on where the coin was dropped
-    for (var checki = 0; checki <= this.cols; checki++) {
-      let cisk = this.state.gridFull
-              && this.state.gridFull[checki]
-              && this.state.gridFull[checki][storek];
-      console.log("cisk: " + cisk);
-      if (cisk === ik) {
+    //checks horizontally for matches from LEFT to RIGHT, from where the coin landed
+    for (let checki = 0; checki <= this.cols; checki++) {
+
+      if (grid[checki][k] === grid[i][k]) {
         matchCount++;
         if (matchCount >= 4) {
-          return gridFull[i][k];
+          return grid[i][k];
         }
       } else {
         matchCount = 0;
@@ -90,16 +73,16 @@ class ConnectBoard extends React.Component {
     matchCount = 0;
   }
 
-  checkIfVertMatch(i, k) {
-    const gridFull = {...this.state.gridFull};
+  checkForVerticalMatch(i, k) {
+    const grid = {...this.state.grid};
     let matchCount = 0;
 
-    //checks vertically for matches, based on where the coin was dropped
-    for (var checkk = 0; checkk <= this.rows; checkk++) {
-      if (gridFull[i][checkk] === gridFull[i][k]) {
+    //checks vertically for matches, based on where the coin landed
+    for (let checkk = 0; checkk <= this.rows; checkk++) {
+      if (grid[i][checkk] === grid[i][k]) {
         matchCount++;
         if (matchCount >= 4) {
-          return gridFull[i][k];
+          return grid[i][k];
         }
       } else {
         matchCount = 0;
@@ -108,20 +91,24 @@ class ConnectBoard extends React.Component {
     matchCount = 0;
   }
 
-  checkIfDiagMatch(i, k) {
-    const gridFull = {...this.state.gridFull};
+  checkForDiagonalMatch(i, k) {
+    const grid = {...this.state.grid};
     let matchCount = 0;
+    let ULchecki = i;
+    let ULcheckk = k;
+    let URchecki = i;
+    let URcheckk = k;
 
-    //checks diagonally what's the UPPER LEFT most value based on drop 
-    for (var ULchecki = i, ULcheckk = k; ULchecki > 0 && ULcheckk > 0; ULcheckk--, ULchecki--) {
+    // starting from where the coin dropped, this sets the variables first to the UPPER LEFT most cell until it hits the edge
+    for (; ULchecki > 0 && ULcheckk > 0; ULcheckk--, ULchecki--) {
     }
 
-    //checks diagonally from UPPER LEFT to LOWER RIGHT 
-    for (var ULcheckcol = ULchecki, ULcheckrow = ULcheckk; ULcheckcol < this.cols && ULcheckrow < this.rows; ULcheckrow++, ULcheckcol++) {
-      if (gridFull[ULcheckcol][ULcheckrow] === gridFull[i][k]) {
+    //now starts check diagonally from UPPER LEFT to LOWER RIGHT 
+    for (let ULcheckcol = ULchecki, ULcheckrow = ULcheckk; ULcheckcol < this.cols && ULcheckrow < this.rows; ULcheckrow++, ULcheckcol++) {
+      if (grid[ULcheckcol][ULcheckrow] === grid[i][k]) {
         matchCount++;
         if (matchCount >= 4) {
-          return gridFull[i][k];
+          return grid[i][k];
         }
       } else {
         matchCount = 0;
@@ -129,16 +116,16 @@ class ConnectBoard extends React.Component {
     }
     matchCount = 0;
 
-    //checks diagonally what's the UPPER LEFT most value based on drop 
-    for (var URchecki = i, URcheckk = k; URchecki < (this.cols - 1) && URcheckk > 0; URchecki++, URcheckk--) {
+    // starting from where the coin dropped, this sets the variables first to the UPPER RIGHT most cell until it hits the edge
+    for (; URchecki < (this.cols - 1) && URcheckk > 0; URchecki++, URcheckk--) {
     }
 
-    //checks diagonally from UPPER RIGHT to LOWER LEFT 
-    for (var URcheckcol = URchecki, URcheckrow = URcheckk; URcheckcol >= 0 && URcheckrow < this.rows; URcheckcol--, URcheckrow++) {
-      if (gridFull[URcheckcol][URcheckrow] === gridFull[i][k]) {
+    // now starts check diagonally from UPPER RIGHT to LOWER LEFT 
+    for (let URcheckcol = URchecki, URcheckrow = URcheckk; URcheckcol >= 0 && URcheckrow < this.rows; URcheckcol--, URcheckrow++) {
+      if (grid[URcheckcol][URcheckrow] === grid[i][k]) {
         matchCount++;
         if (matchCount >= 4) {
-          return gridFull[i][k];
+          return grid[i][k];
         }
       } else {
         matchCount = 0;
@@ -148,14 +135,12 @@ class ConnectBoard extends React.Component {
   }
 
   whoseTurn() {
-
+    //increment this.state.turns by +1
     this.setState(prevState => {
-       return {turns: prevState.turns + 1}
+      return {turns: prevState.turns + 1}
     })
 
-    console.log("turns: " + this.state.turns);
-    console.log("turns%2: " + (this.state.turns % 2));
-
+    // checks whose turn is it, based on if it's an odd or even count from the total turns taken in the game
     if (this.state.turns % 2 === 1) {
       return "dropping-coin p-red";
     };
@@ -165,51 +150,38 @@ class ConnectBoard extends React.Component {
 
   whereCoinWillStop(i, j) {
 
-    const gridFull = {...this.state.gridFull};
+    const grid = {...this.state.grid};
+    let k = (this.rows - 1);
 
-    for (var k = (this.rows - 1); k > -1; k--) {
+    // checks the clicked column from the bottom most item, going to top for a blank cell where the coin should stop
+    for (; k > -1; k--) {
 
-      if (gridFull[i][k] === "dropping-coin") { 
-        gridFull[i][k] = this.whoseTurn();
+      if (grid[i][k] === "dropping-coin") { 
+        grid[i][k] = this.whoseTurn();
 
-        this.setState({ gridFull });
+        this.setState({ grid });
         break;
       };
     };
-
-    let wherecoini = i;
-    let wherecoink = k;
     return [i, k];
   }
 
 
   dropCoin(i, j) {
     const coinstopresult = this.whereCoinWillStop(i, j);
-    if (coinstopresult === "stop") {
-      console.log("stopping everything!!");
-      return;
-    }
-    const coinstopi = coinstopresult[0]
-    const coinstopk = coinstopresult[1]
 
-    const matchresultd = this.checkIfDiagMatch(coinstopresult[0], coinstopresult[1]);
-    var diagresult = this.checkForWinner(matchresultd);
-    console.log("zar diagresult before chkforwin: " + diagresult);
-    
+    //check for matches for all directions, based on where the new coin had just dropped
+    let diagresult = this.checkForWinner(this.checkForDiagonalMatch(coinstopresult[0], coinstopresult[1]));
+    let vertresult = undefined;
+
     if (diagresult === undefined) {
-      const matchresultv = this.checkIfVertMatch(coinstopi, coinstopk);
-      var vertresult = this.checkForWinner(matchresultv);
-      console.log("zar vertresult before chkforwin: " + vertresult);
+      vertresult = this.checkForWinner(this.checkForVerticalMatch(coinstopresult[0], coinstopresult[1]));
     }
     
-    //error note 19: don't blame javascript all the time, sometimes its your logic that's missing a step
     if (diagresult === undefined && vertresult === undefined) {
-      const matchresult = this.checkIfMatch(coinstopi, coinstopk);
-      var horizresult = this.checkForWinner(matchresult);
-      console.log("zar horizresult: " + horizresult);
+      this.checkForWinner(this.checkForHorizontalMatch(coinstopresult[0], coinstopresult[1]));
     }
-    //error note 18: missed important conditionals that reset the value that i needed. console log helps you trace the wrong logic/flow.
-    console.log("zar end checks----");
+
   }
 
 
@@ -218,8 +190,8 @@ class ConnectBoard extends React.Component {
     let whoseTurn = this.state.turns % 2 === 0 ? "yellow's " : "red's ";
 
     let winningPlayer = (this.state.turns % 2 === 0) ? "red " : "yellow ";
-    winningPlayer = (this.state.winnerplayer === "showitwin") ? winningPlayer : "";
-    winningPlayer = (this.state.winnerplayer === "showit") ? this.state.nobody : winningPlayer;
+    winningPlayer = (this.state.winnerplayer === "show-winner-modal") ? winningPlayer : "";
+    winningPlayer = (this.state.winnerplayer === "show-winner") ? this.state.nobody : winningPlayer;
 
     return (
       <div className="connect-background">
@@ -238,7 +210,15 @@ class ConnectBoard extends React.Component {
             </div>
           </div>
 
-          {[...Array(this.cols)].map((e, i) => <Column className="comp-column" onClick={this.dropCoin} col={i} gridFull={this.state.gridFull} dropCoin={this.dropCoin} changeBoxColor={this.changeBoxColor} cols={this.cols} rows={this.rows}></Column>)}
+          {[...Array(this.cols)].map((e, i) => <Column className="comp-column" 
+                                                        onClick={this.dropCoin} 
+                                                        col={i} 
+                                                        grid={this.state.grid} 
+                                                        dropCoin={this.dropCoin} 
+                                                        cols={this.cols} 
+                                                        rows={this.rows}
+                                                />
+            )}
 
         </div>  
 
